@@ -1,52 +1,20 @@
-name: 'New Version'
+name: Repository Dispatch
 
 on:
-  workflow_dispatch:
-    inputs:
-      tag_name:
-        required: true
-      app_repo:
-        required: true
-      image:
-        required: true
-
-
+  repository_dispatch:
+    types: [new-image]
 jobs:
-  update-image-tag:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Wrap Input
-        run: |
-          echo "APP_REPO=${{ github.event.inputs.app_repo }}" >> $GITHUB_ENV
-          echo "TAG_NAME=${{ github.event.inputs.tag_name }}" >> $GITHUB_ENV
-          echo "IMAGE=${{ github.event.inputs.image }}" >> $GITHUB_ENV
-          echo "DEPLOY_FILE_PATH=applications/${{ github.event.inputs.app_repo }}/deployment.yaml" >> $GITHUB_ENV
-      - uses: actions/checkout@v3
-      - uses: azure/setup-kubectl@v2.0
-        id: install
-      - name: patch deployment manifest
-        run: kubectl patch --filename=${{ env.DEPLOY_FILE_PATH }} --patch='{"spec":{"template":{"spec":{"containers":[{"name":"${{ env.APP_REPO }}","image":"${{ env.IMAGE }}"}]}}}}' --local=true -o yaml > tmp.yaml
+    - uses: actions/checkout@v2
+
+    - name: Update Image Version
+      id: imgupd
+      uses: mikefarah/yq@master
+      with:
+        cmd: yq eval '.spec.template.spec.containers[0].image = "${{ github.event.client_payload.image }}"' -i node-app/deployment.yaml
       
-      - name: commit change
-        run: |
-            git config user.name ${{ github.actor }}
-            git config user.email '${{ github.actor }}@users.noreply.github.com'
-            rm -f ${{ env.DEPLOY_FILE_PATH }}
-            mv tmp.yaml ${{ env.DEPLOY_FILE_PATH }}
-            git add ${{ env.DEPLOY_FILE_PATH }}
-            git diff-index --quiet HEAD || git commit -m "Set ${{ env.APP_REPO }} to version ${{ env.TAG_NAME }}"
-      
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITACTION_PAT }}
-          commit-message: Update report
-          committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          signoff: false
-          branch: new_release_${{ env.APP_REPO }}-${{ env.TAG_NAME }}
-          title: 'Set ${{ env.APP_REPO }} to version ${{ env.TAG_NAME }}'
-          body: |
-            This PR was automatically created.
-            Please review and merge to deploy.
+    - uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Apply image name changes

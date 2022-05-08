@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: flask-app
-          image: Ipsegs/flask-hello-test:master-5d7c43b-v1.0.31
+          image: Ipsegs/flask-hello-test:master-5d7c43b-v1.0.32
           ports:
             - containerPort: 9000

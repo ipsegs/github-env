@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: flask-app
   labels:
-      app: flask-app
+    app: flask-app
 spec:
   replicas: 1
   selector:
@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: flask-app
-          image: ipsegs/flask-hello-test:master-9a632e7-v1.0.33
+          image: ipsegs/flask-app:main-9bbaac8-v1.0.3
           ports:
-             - containerPort: 5000
+            - containerPort: 5000

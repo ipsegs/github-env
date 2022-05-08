@@ -26,8 +26,7 @@ jobs:
       - uses: azure/setup-kubectl@v2.0
         id: install
       - name: patch deployment manifest
-        run: kubectl patch --filename=${{ env.DEPLOY_FILE_PATH }} --patch='{"spec":{"template":{"spec":{"containers":[{"name":"${{ env.APP_REPO }}","image":"${{ env.IMAGE }}"}]}}}}' --local=true -o yaml
-        > tmp.yaml
+        run: kubectl patch --filename=${{ env.DEPLOY_FILE_PATH }} --patch='{"spec":{"template":{"spec":{"containers":[{"name":"${{ env.APP_REPO }}","image":"${{ env.IMAGE }}"}]}}}}' --local=true -o yaml > tmp.yaml
       
       - name: commit change
         run: |

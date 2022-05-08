@@ -1,4 +1,4 @@
-name: New Version
+name: 'New Version'
 
 on:
   workflow_dispatch:

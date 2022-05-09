@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: node-app-argo-application
+  name: flask-app
   namespace: argocd
 spec:
   project: default
@@ -12,7 +12,7 @@ spec:
     path: node-app
   destination: 
     server: https://kubernetes.default.svc
-    namespace: node-app
+    namespace: default
 
   syncPolicy:
     syncOptions:

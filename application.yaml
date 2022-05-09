@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/Ipsegs/github-env.git
     targetRevision: HEAD
-    path: node-app
+    path: flask-app
   destination: 
     server: https://kubernetes.default.svc
     namespace: default

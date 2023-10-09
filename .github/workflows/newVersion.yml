@@ -17,7 +17,7 @@ jobs:
       with:
         cmd: yq eval '.spec.template.spec.containers[0].image = "${{ github.event.client_payload.image }}"' -i flask-app/deployment.yaml
       
-    - uses: stefanzweifel/git-auto-commit-action@v4
+    - uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: Apply image name changes
         commit_user_name: ${{ github.actor }}
